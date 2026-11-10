@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#110d0e">
+  <title>Vampire Dice Roller</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect fill='%23110d0e' width='32' height='32' rx='6'/%3E%3Cpath fill='%239d2332' d='M16 4c3 5 8 9 8 14a8 8 0 1 1-16 0c0-5 5-9 8-14z'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="sheet">
+    <header class="mast">
+      <h1>Vampire Dice Roller</h1>
+    </header>
+
+    <form id="roller" class="panel">
+      <div class="controls">
+        <div class="control">
+          <label for="pool">Pool</label>
+          <div class="stepper">
+            <button type="button" id="pool-dec" aria-label="Decrease pool">−</button>
+            <input id="pool" name="pool" type="number" min="1" max="30" value="5" inputmode="numeric" autocomplete="off">
+            <button type="button" id="pool-inc" aria-label="Increase pool">+</button>
+          </div>
+        </div>
+
+        <div class="control">
+          <span id="hunger-label">Hunger</span>
+          <div class="hunger-picks" role="group" aria-labelledby="hunger-label">
+            <svg class="drop-defs" width="0" height="0" aria-hidden="true" focusable="false">
+              <defs>
+                <linearGradient id="drop-fill" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#ef6d6d"/>
+                  <stop offset="100%" stop-color="#7a1522"/>
+                </linearGradient>
+              </defs>
+            </svg>
+            <button type="button" class="text-pick" data-hunger="0" aria-pressed="false">0</button>
+            <button type="button" class="drop-btn" data-hunger="1" aria-pressed="true" aria-label="Hunger 1"><svg class="drop" viewBox="0 0 24 32" aria-hidden="true"><path d="M12 .6C12 .6 3.6 12.2 3.6 20.4a8.4 8.4 0 0 0 16.8 0C20.4 12.2 12 .6 12 .6z"/></svg></button>
+            <button type="button" class="drop-btn" data-hunger="2" aria-pressed="false" aria-label="Hunger 2"><svg class="drop" viewBox="0 0 24 32" aria-hidden="true"><path d="M12 .6C12 .6 3.6 12.2 3.6 20.4a8.4 8.4 0 0 0 16.8 0C20.4 12.2 12 .6 12 .6z"/></svg></button>
+            <button type="button" class="drop-btn" data-hunger="3" aria-pressed="false" aria-label="Hunger 3"><svg class="drop" viewBox="0 0 24 32" aria-hidden="true"><path d="M12 .6C12 .6 3.6 12.2 3.6 20.4a8.4 8.4 0 0 0 16.8 0C20.4 12.2 12 .6 12 .6z"/></svg></button>
+            <button type="button" class="drop-btn" data-hunger="4" aria-pressed="false" aria-label="Hunger 4"><svg class="drop" viewBox="0 0 24 32" aria-hidden="true"><path d="M12 .6C12 .6 3.6 12.2 3.6 20.4a8.4 8.4 0 0 0 16.8 0C20.4 12.2 12 .6 12 .6z"/></svg></button>
+            <button type="button" class="drop-btn" data-hunger="5" aria-pressed="false" aria-label="Hunger 5"><svg class="drop" viewBox="0 0 24 32" aria-hidden="true"><path d="M12 .6C12 .6 3.6 12.2 3.6 20.4a8.4 8.4 0 0 0 16.8 0C20.4 12.2 12 .6 12 .6z"/></svg></button>
+          </div>
+          <p class="hint" id="hunger-hint">Hunger 1</p>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button type="button" class="roll-btn roll-plain" id="roll-plain">Without hunger</button>
+        <button type="submit" class="roll-btn" id="roll-btn">Roll 5 dice</button>
+      </div>
+    </form>
+
+    <section class="stage" id="stage">
+      <p class="empty" id="empty">Choose a pool and roll.</p>
+      <div class="groups" id="groups" hidden></div>
+      <div class="result" id="result" hidden></div>
+    </section>
+
+    <section class="log" id="log" hidden>
+      <div class="log-head">
+        <h2>This session</h2>
+        <button type="button" id="clear-log" class="text-btn">Clear</button>
+      </div>
+      <ol id="log-list"></ol>
+    </section>
+
+    <section class="legend" aria-label="How to read the dice">
+      <h2>Reading the roll</h2>
+      <ul>
+        <li><b>6 or higher</b> is a success. A 10 counts as a success.</li>
+        <li><b>Each pair of 10s</b> is a critical and adds two extra successes.</li>
+        <li><b>A hunger 10</b> inside that critical makes it a messy critical.</li>
+        <li><b>A hunger 1</b> is a potential bestial failure. If the roll has no successes, it is a bestial failure.</li>
+      </ul>
+    </section>
+
+  </main>
+  <script src="roller.js"></script>
+</body>
+</html>
