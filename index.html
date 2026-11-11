@@ -56,7 +56,10 @@
 
       <div class="actions">
         <button type="button" class="roll-btn roll-plain" id="roll-plain">Without hunger</button>
-        <button type="submit" class="roll-btn" id="roll-btn">Roll 5 dice</button>
+        <div class="roll-row">
+          <button type="submit" class="roll-btn" id="roll-btn">Roll 5 dice</button>
+          <button type="button" class="roll-btn roll-rouse" id="roll-rouse">Rouse Check</button>
+        </div>
       </div>
     </form>
 
@@ -81,6 +84,7 @@
         <li><b>Each pair of 10s</b> is a critical and adds two extra successes.</li>
         <li><b>A hunger 10</b> inside that critical makes it a messy critical.</li>
         <li><b>A hunger 1</b> is a potential bestial failure. If the roll has no successes, it is a bestial failure.</li>
+        <li><b>Rouse Check</b> is one die. 6 or higher is a success. 1–5 fails and raises Hunger by one.</li>
       </ul>
     </section>
 

@@ -125,6 +125,7 @@ var VampireRoller = (function () {
     var form = document.getElementById("roller");
     var rollBtn = document.getElementById("roll-btn");
     var rollPlain = document.getElementById("roll-plain");
+    var rollRouse = document.getElementById("roll-rouse");
     var empty = document.getElementById("empty");
     var groups = document.getElementById("groups");
     var resultEl = document.getElementById("result");
@@ -254,6 +255,11 @@ var VampireRoller = (function () {
       }
       log.hidden = false;
       logList.innerHTML = history.map(function (item) {
+        if (item.kind === "rouse") {
+          var rouseClass = item.success ? "rouse-success" : "rouse-fail";
+          var rouseText = item.success ? "Success" : "Failed · Gain 1 Hunger";
+          return '<li class="' + rouseClass + '"><span>Rouse Check</span><strong>' + rouseText + "</strong></li>";
+        }
         return '<li class="' + item.outcome + '"><span>Pool ' + item.pool + " · Hunger " + item.hunger +
           '</span><strong>' + OUTCOMES[item.outcome] + " · " + successWord(item.total) + "</strong></li>";
       }).join("");
@@ -271,6 +277,68 @@ var VampireRoller = (function () {
       });
       if (history.length > 12) history.length = 12;
       renderLog();
+    }
+
+    function renderRouseDie(value, rolling) {
+      var shown = rolling ? rollD10() : value;
+      var success = value >= 6;
+      var classes = "die" + (rolling ? " rolling" : success ? " rouse-ok" : " fail");
+      var label = rolling ? "Rouse die, rolling" : "Rouse die showing " + value + (success ? ", success" : ", fail");
+      groups.innerHTML =
+        '<div class="group"><p class="group-label">Rouse</p><div class="group-dice">' +
+        '<div class="' + classes + '" role="img" aria-label="' + label + '">' +
+        '<span class="face">' + shown + '</span><span class="tag"></span></div></div></div>';
+      groups.hidden = false;
+      groups.removeAttribute("data-many");
+      empty.hidden = true;
+    }
+
+    function renderRouseResult(value) {
+      var success = value >= 6;
+      resultEl.hidden = false;
+      resultEl.setAttribute("data-outcome", success ? "rouse-success" : "rouse-fail");
+      resultEl.setAttribute("aria-live", "polite");
+      resultEl.innerHTML =
+        '<p class="result-kicker">Rouse Check</p>' +
+        '<p class="rouse-label">' + (success ? "Success" : "Failed · Gain 1 Hunger") + "</p>";
+    }
+
+    function finishRouse(value) {
+      var success = value >= 6;
+      renderRouseDie(value, false);
+      renderRouseResult(value);
+      if (!success) setHunger(hunger + 1);
+      stage.setAttribute("aria-busy", "false");
+      history.unshift({ kind: "rouse", success: success });
+      if (history.length > 12) history.length = 12;
+      renderLog();
+    }
+
+    function rouse() {
+      var current = ++token;
+      var value = rollD10();
+      stage.setAttribute("aria-busy", "true");
+      resultEl.hidden = true;
+      if (prefersReducedMotion()) {
+        finishRouse(value);
+        return;
+      }
+      renderRouseDie(value, true);
+      var started = performance.now();
+      var lastFlicker = 0;
+      function frame(now) {
+        if (current !== token) return;
+        if (now - started >= 700) {
+          finishRouse(value);
+          return;
+        }
+        if (now - lastFlicker > 70) {
+          renderRouseDie(value, true);
+          lastFlicker = now;
+        }
+        requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
     }
 
     function roll(hungerDice) {
@@ -320,6 +388,9 @@ var VampireRoller = (function () {
     rollPlain.addEventListener("click", function () {
       setPool(poolInput.value);
       roll(0);
+    });
+    rollRouse.addEventListener("click", function () {
+      rouse();
     });
     clearLog.addEventListener("click", function () {
       history = [];
